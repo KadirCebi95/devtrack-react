@@ -11,23 +11,32 @@ function App() {
       name: "Kadir",
       role: "Frontend Software Engineer",
       buttonText: "Follow",
+      city:"İstanbul",
     },
     {
       id: 2,
       name: "Ahmet",
       role: "Backend Developer",
       buttonText: "Message",
+      city:"İzmir",
     },
     {
       id: 3,
       name: "Ayşe",
       role: "UI/UX Designer",
       buttonText: "Contact",
+      city:"Kars"
     },
   ];
+
+  const normalizedSearch = search.toLowerCase().trim();
   const filteredUsers = users.filter((user) => {
-    return user.name.toLowerCase().includes(search.toLowerCase());
-  });
+  return (
+    user.name.toLowerCase().includes(normalizedSearch) ||
+    user.role.toLowerCase().includes(normalizedSearch) || 
+    user.city.toLowerCase().includes(normalizedSearch)
+  );
+});
   return (
     <>
       <Header />
@@ -41,7 +50,7 @@ function App() {
 
       <div className="card-container">
         {filteredUsers.length > 0 ? (
-          filteredUsers.map((user) => <ProfileCard key={user.id} user={user} />)
+          filteredUsers.map((user) => <ProfileCard key={user.id} user={user}  />)
         ) : (
           <p>No developers found.</p>
         )}
