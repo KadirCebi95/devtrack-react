@@ -182,3 +182,7 @@
     border-right-color: var(--border);
   }
 }
+.role-filters button.active {
+  background-color: #222;
+  color: white;
+}
