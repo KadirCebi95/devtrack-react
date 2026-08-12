@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from "react";
 import './ProfileCard.css'
 
-const ProfileCard = ({user}) => {
+const ProfileCard = ({user,onDelete}) => {
 
   const [isFollowing, setIsFollowing] = useState(false);
 
@@ -15,6 +15,8 @@ const ProfileCard = ({user}) => {
         {isFollowing ? "Following" : "Follow"}
       
       </button>
+      <br />
+      <button onClick={() => onDelete(user.id)}>Delete</button>
     </div>
   )
 }

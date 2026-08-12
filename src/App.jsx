@@ -7,7 +7,7 @@ function App() {
   const [search, setSearch] = useState("");
   const [selectedRole, setSelectedRole] = useState("All");
 
-  const users = [
+  const [users, setUsers] = useState([
     {
       id: 1,
       name: "Kadir",
@@ -29,9 +29,16 @@ function App() {
       buttonText: "Contact",
       city: "Kars",
     },
-  ];
+  ]);
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  const [city, setCity] = useState("");
 
   const normalizedSearch = search.toLowerCase().trim();
+  const handleDelete = (id) => {
+    const updatedUsers = users.filter((user) => user.id !== id);
+    setUsers(updatedUsers);
+  }
   const filteredUsers = users.filter((user) => {
     const searchMatches =
       user.name.toLowerCase().includes(normalizedSearch) ||
@@ -43,6 +50,7 @@ function App() {
 
     return searchMatches && roleMatches;
   });
+
   return (
     <>
       <Header />
@@ -53,6 +61,46 @@ function App() {
           setSearch(event.target.value);
         }}
       />
+     <form onSubmit={(event) => { event.preventDefault(); 
+     if(!name || !role || !city) {
+      return;
+     }
+     const newUser = {
+      id:Date.now(),
+      name:name,
+      role:role,
+      city:city,
+      buttonText:"Follow",
+     };
+     setUsers([...users,newUser]);
+     setName("");
+     setRole("");
+     setCity("");
+
+
+     }}>
+        <input
+          type="text"
+          placeholder="Name"
+          onChange={(event) => setName(event.target.value)}
+          value={name}
+        />
+        <input
+          type="text"
+          placeholder="Role"
+          onChange={(event) => setRole(event.target.value)}
+          value={role}
+        />
+        <input
+          type="text"
+          placeholder="City"
+          onChange={(event) => setCity(event.target.value)}
+          value={city}
+        />
+
+        <button type="submit">Add developer</button>
+      </form>
+
       <div className="role-filters">
         <button
           className={selectedRole === "All" ? "active" : ""}
@@ -86,7 +134,7 @@ function App() {
 
       <div className="card-container">
         {filteredUsers.length > 0 ? (
-          filteredUsers.map((user) => <ProfileCard key={user.id} user={user} />)
+          filteredUsers.map((user) => <ProfileCard key={user.id} user={user} onDelete={handleDelete} />)
         ) : (
           <p>No developers found.</p>
         )}
