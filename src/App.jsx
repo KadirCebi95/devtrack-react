@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Header from "./components/Header";
 import ProfileCard from "./components/ProfileCard";
@@ -6,8 +6,7 @@ import ProfileCard from "./components/ProfileCard";
 function App() {
   const [search, setSearch] = useState("");
   const [selectedRole, setSelectedRole] = useState("All");
-
-  const [users, setUsers] = useState([
+  const initialUsers = [
     {
       id: 1,
       name: "Kadir",
@@ -29,7 +28,14 @@ function App() {
       buttonText: "Contact",
       city: "Kars",
     },
-  ]);
+  ];
+
+  const [users, setUsers] = useState(() => {
+    const savedUsers = localStorage.getItem("users");
+
+    return savedUsers ? JSON.parse(savedUsers) : initialUsers;
+  });
+
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [city, setCity] = useState("");
@@ -38,7 +44,12 @@ function App() {
   const handleDelete = (id) => {
     const updatedUsers = users.filter((user) => user.id !== id);
     setUsers(updatedUsers);
-  }
+  };
+
+  useEffect(() => {
+    localStorage.setItem("users", JSON.stringify(users), [users]);
+  });
+
   const filteredUsers = users.filter((user) => {
     const searchMatches =
       user.name.toLowerCase().includes(normalizedSearch) ||
@@ -61,24 +72,25 @@ function App() {
           setSearch(event.target.value);
         }}
       />
-     <form onSubmit={(event) => { event.preventDefault(); 
-     if(!name || !role || !city) {
-      return;
-     }
-     const newUser = {
-      id:Date.now(),
-      name:name,
-      role:role,
-      city:city,
-      buttonText:"Follow",
-     };
-     setUsers([...users,newUser]);
-     setName("");
-     setRole("");
-     setCity("");
-
-
-     }}>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (!name || !role || !city) {
+            return;
+          }
+          const newUser = {
+            id: Date.now(),
+            name: name,
+            role: role,
+            city: city,
+            buttonText: "Follow",
+          };
+          setUsers([...users, newUser]);
+          setName("");
+          setRole("");
+          setCity("");
+        }}
+      >
         <input
           type="text"
           placeholder="Name"
@@ -134,7 +146,9 @@ function App() {
 
       <div className="card-container">
         {filteredUsers.length > 0 ? (
-          filteredUsers.map((user) => <ProfileCard key={user.id} user={user} onDelete={handleDelete} />)
+          filteredUsers.map((user) => (
+            <ProfileCard key={user.id} user={user} onDelete={handleDelete} />
+          ))
         ) : (
           <p>No developers found.</p>
         )}
